@@ -1,6 +1,7 @@
 **TL;DR**
 Writing from scratch a GAs system is a great learning experience but for real a task don't reinvent the wheel. It's not just a matter of subtleties: issues in a fresh implementation could easily go unnoticed because GAs trade fault-tolerance for performance.
 
+---
 
 
 This post is inspired by a question asked on StackOverflow.
@@ -11,9 +12,12 @@ Specifically the program attempted to guess a secret phrase (I'm sorry, not [`"M
 
 The task is a good way to introduce oneself to GAs since a solution doesn't require too much code. This is not to say it's a trivial task: many details are interesting and there are several error-prone choices.
 
-The user's code wasn't working because of minor overlooks (Python indentation, missing function calls) and some GAs specific issues.
+The code didn't work because of:
 
-Let's start to debug.
+- minor overlooks (Python indentation, missing function calls);
+- some GAs specific issues.
+
+Debugging the GAs-specific issues is a great learning experience.
 
 ## Crossover operator
 
