@@ -150,4 +150,4 @@ The algorithm has a `O(n)` complexity. Having to pick many values with the same 
 
 ## Notes
 
-The complete Python program is available as a [Gist](https://gist.github.com/morinim/8e8703bb253d4e7f8359401fd185e311).
+The complete Python program is available [here](https://github.com/morinim/documents/blob/master/ga_string_guess/ga.py).
