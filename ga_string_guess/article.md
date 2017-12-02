@@ -42,13 +42,13 @@ def crossover(parentA, parentB):
 
 It's a standard *single-point crossover*: a single crossover point on both parents' strings is selected and all data beyond that point in either organism string is swapped between the two parent organisms. The resulting organisms are the children:
 
-![Single-point crossover](https://github.com/morinim/documents/blob/master/ga_string_guess/one_point_crossover.png)
+![Single-point crossover](one_point_crossover.png)
 
 Does the description match the code? Only partially.
 
 **The first child is correctly generated but the second one is reversed**:
 
-![Wrong single-point crossover](https://github.com/morinim/documents/blob/master/ga_string_guess/one_point_crossover2.png)
+![Wrong single-point crossover](one_point_crossover2.png)
 
 It works but in a less than optimal manner: [schemata](https://en.wikipedia.org/wiki/Schema_(genetic_algorithms)) in the second child are completely messed.
 
