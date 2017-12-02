@@ -1,3 +1,7 @@
+![Creative Commons Attribution-ShareAlike 4.0 International License](https://i.creativecommons.org/l/by-sa/4.0/88x31.png) *This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)*
+
+---
+
 **TL;DR**
 Writing from scratch a GAs system is a great learning experience but for a real task don't reinvent the wheel. It's not just a matter of subtleties: issues in a fresh implementation could easily go unnoticed because GAs are fault-tolerant by their very nature... at the expence of performance.
 
