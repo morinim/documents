@@ -1,5 +1,5 @@
 **TL;DR**
-Writing from scratch a GAs system is a great learning experience but for real a task don't reinvent the wheel. It's not just a matter of subtleties: issues in a fresh implementation could easily go unnoticed because GAs trade fault-tolerance for performance.
+Writing from scratch a GAs system is a great learning experience but for a real task don't reinvent the wheel. It's not just a matter of subtleties: issues in a fresh implementation could easily go unnoticed because GAs trade fault-tolerance for performance.
 
 ---
 
