@@ -8,7 +8,7 @@ Writing from scratch a GAs system is a great learning experience but for a real 
 ---
 
 
-This post is inspired by a question asked on StackOverflow.
+The article is inspired by a question asked on StackOverflow.
 
 A user was trying to understand how to implement a genetic algorithm for string guessing.
 
