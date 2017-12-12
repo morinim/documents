@@ -150,7 +150,25 @@ def generateNewPopulation(population):
         # ...
 ```
 
-The algorithm has a `O(n)` complexity. Having to pick many values with the same set of weights, we could also turn this solution into a `O(log(n))` solution by using a binary search, or even an `O(1)` solution by using some kind of look-up table (e.g.  [Wikipedia](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)).
+The algorithm has a `O(n)` complexity. Having to pick many values with the same set of weights, we could also turn this solution into a `O(log(n))` solution by using a binary search, or even an `O(1)` solution by using some kind of look-up table (see  [Wikipedia - Fitness Proportionate Selection](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)).
+
+## Alternative selection method
+
+Initially only part of the issues had been identified: the calls to the selection function (`chooseChild`) were completely missing and this seemed the main problem.
+
+A selection procedure was suggested ([tournament selection](https://en.wikipedia.org/wiki/Tournament_selection)):
+
+```python
+def tournament_child(population, pressure = 4):
+    participants = random.sample(population.keys(), pressure)
+    return max(participants, key = lambda k: population[k])
+```
+
+and the missing calls inserted into the `generateNewPopulation` function. Everything started to work and everyone was happy.
+
+Indeed it was just a half solution: playing with the code you can easily determine that **a correct implementation is at least an order of magnitute faster**.
+
+It's the *double nature* of GAs: if there is a way to crash your code they will find it and, at the same time, the will bypass implementation error as much as they can (at the expence of performance).
 
 ## Notes
 
