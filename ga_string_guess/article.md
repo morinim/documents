@@ -169,7 +169,7 @@ and the missing calls inserted into the `generateNewPopulation` function. Everyt
 
 Indeed it was just a half solution: playing with the code you can easily determine that **a correct implementation is at least an order of magnitute faster**.
 
-It's the *double nature* of GAs: if there is a way to crash your code they will find it and, at the same time, the will bypass implementation error as much as they can (at the expence of performance).
+It's the *double nature* of genetic algorithms: if there is a way to crash your code they will find it and, at the same time, the will bypass implementation error as much as they can (at the expence of performance).
 
 ## Notes
 
