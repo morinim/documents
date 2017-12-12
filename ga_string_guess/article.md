@@ -7,7 +7,7 @@ Writing from scratch a GAs system is a great learning experience but for real ta
 
 ---
 
-<img align="left" src="weasel.png" alt="Methinks it is like a weasel">
+<img align="left" width="100" src="weasel.png" alt="Methinks it is like a weasel">
 
 The article is inspired by a question asked on StackOverflow.
 
