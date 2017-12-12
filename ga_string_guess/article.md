@@ -7,6 +7,7 @@ Writing from scratch a GAs system is a great learning experience but for real ta
 
 ---
 
+![Methinks it is like a weasel](weasel.png)
 
 The article is inspired by a question asked on StackOverflow.
 
