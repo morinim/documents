@@ -43,13 +43,13 @@ def crossover(parentA, parentB):
 
 It's a standard *single-point crossover*: a single crossover point on both parents' strings is selected and all data beyond that point in either organism string is swapped between the two parent organisms. The resulting organisms are the children:
 
-![Single-point crossover](one_point_crossover.png)
+<img src="one_point_crossover.png" width="400" alt="Single-point crossover" />
 
 Does the description match the code? Only partially.
 
 **The first child is correctly generated but the second one is reversed**:
 
-![Wrong single-point crossover](one_point_crossover2.png)
+<img src="one_point_crossover2.png" width="400" alt="Wrong single-point crossover" />
 
 It works but in a less than optimal manner: [schemata](https://en.wikipedia.org/wiki/Schema_(genetic_algorithms)) in the second child are completely messed.
 
