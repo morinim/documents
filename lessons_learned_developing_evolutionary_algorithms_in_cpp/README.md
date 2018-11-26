@@ -30,3 +30,7 @@ AI, C++20, Fortran, GIS, hpx, IoT, Optimization, Reflection, SFINAE
  
 ## Organizzatore
 [Italian C++ Community ](http://www.italiancpp.org/)
+
+## Riferimenti
+
+https://www.italiancpp.org/event/cppday18/
