@@ -1,3 +1,23 @@
+# Lessons Learned developing evolutionaru algorithms in C++
+
+Evolutionary optimisation frameworks offer significant ‘off-the-shelf’ optimisation capabilities.
+Many C++ libraries enjoy on-going development and increasing maturity and they can be attractive options for programmers.
+
+This talk describes some key aspects to make an informed choice:
+
+- evolutionary algorithms (EAs) and the AI / ML landscape;
+- how do they work;
+- (sub-)varieties of EAs;
+- when to prefer other approaches;
+- coding examples;
+- survey of available C++ frameworks.
+
+It also deals with C++ techniques adopted in our open source Genetic Programming framework (Vita) regarding:
+
+- PRNG;
+- hashing;
+- small vector optimization.
+
 # C++ Day 2018
 24 novembre @ 8:30 AM - 6:00 PM
 
