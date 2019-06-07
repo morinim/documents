@@ -1,4 +1,4 @@
-# Lessons Learned developing evolutionaru algorithms in C++
+# Lessons Learned developing evolutionary algorithms in C++
 
 Evolutionary optimisation frameworks offer significant ‘off-the-shelf’ optimisation capabilities.
 Many C++ libraries enjoy on-going development and increasing maturity and they can be attractive options for programmers.
@@ -17,6 +17,8 @@ It also deals with C++ techniques adopted in our open source Genetic Programming
 - PRNG;
 - hashing;
 - small vector optimization.
+
+NOTE: part of the [Vita](https://github.com/morinim/vita)-related code is outdated. An up to date version of the 8-Queens example is available [here](https://github.com/morinim/vita/wiki/8queens_tutorial).
 
 # C++ Day 2018
 24 novembre @ 8:30 AM - 6:00 PM
