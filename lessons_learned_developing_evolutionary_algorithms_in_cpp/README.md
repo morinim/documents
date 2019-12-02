@@ -49,7 +49,7 @@ AI, C++20, Fortran, GIS, hpx, IoT, Optimization, Reflection, SFINAE
 ### Luogo
 
  Dipartimento di Fisica – Università degli Studi di Pavia - [Via Bassi, 6 - Pavia, Italia](https://www.google.com/maps/place/Via+Agostino+Bassi,+6,+27100+Pavia+PV/@45.1977251,9.1409387,17z/data=!3m1!4b1!4m5!3m4!1s0x478727003f1fe2af:0x45860f1770200436!8m2!3d45.1977251!4d9.1431274?hl=en)
- 
+
 ### Organizzatore
 [Italian C++ Community ](http://www.italiancpp.org/)
 
