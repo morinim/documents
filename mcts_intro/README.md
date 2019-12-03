@@ -15,7 +15,7 @@ The C++ Day is a not-for-profit Italian event about C++ development where profes
 
 time          | duration |        room 102 | room 103
 --------------|----------|-----------------|---------
-08.30 - 09.30 |      60' | Check-in        |
+08.30 - 09.30 |      60' | *Check-in*      |
 09.30 - 09.45 |      15' | Welcome Message (Marco Arena) |
 9.45 - 10.15  |      30' | Introducing *Elettric80/Beckhoff/Leica* |
 10.20 - 10.50 |      30' | **TBB Dataflow: parallelism through computational graphs** (Nicolò Valigi) | **Principles of algorithm design in STL** (Francesco Fucci)
