@@ -22,7 +22,7 @@ time          | duration |        room 102 | room 103
 10.50 - 11.20 |      30' | *Break* |
 11.20 - 11.50 |      30' | **Qualità del codice nei sistemi embedded** (Gianmichele Verdano) | **Flip Model Design Pattern!** (Daniele Pallastrelli)
 11.50 - 12.20 |      30' | **C and C++ as programming languages in automation technology** (Stefano Monti) | **Flip Model Design Pattern!** (Daniele Pallastrelli)
-12.25 - 13.15 |      50' | **From Iterators To Ranges — The Upcoming Evolution Of the Standard Library** Valentin Ziegler | **The (few) joys and (many) sorrows of cross-compilation** (Valter Minute)
+12.25 - 13.15 |      50' | **From Iterators To Ranges — The Upcoming Evolution Of the Standard Library** (Valentin Ziegler) | **The (few) joys and (many) sorrows of cross-compilation** (Valter Minute)
 13.15 - 14.30 |      75' | *Launch Break* |
 14.30 - 15.20 |      50' | **Idioms: you're doing it right** (Michele Caini) | **Python Bindings in C++** (Andrea Pallini)
 15.30 - 16.20 |      50' | **An introduction to Monte Carlo Tree Search** (Manlio Morini) | **MISRA C++: A Subset of C++ for the Development of High-Integrity Systems** (Roberto Bagnara)
