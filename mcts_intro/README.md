@@ -9,7 +9,7 @@ As we describe the algorithm, we will write a basic C++ implementation.
 ## C++ Day 2019
 30 novembre @ 9:00 AM - 6:00 PM
 
-![C++ Day 2019 - Parma](cppday19.png)
+![C++ Day 2019 - Parma](cppday2019.png)
 
 The C++ Day is a not-for-profit Italian event about C++ development where professionals, companies and students meet and share experience. The event is subject to the [Italian C++ Community Code of Conduct](https://github.com/italiancpp/code-of-conduct). For an overview of the previous edition, including statistics and technical contents, [read the wrap-up post](https://www.italiancpp.org/2018/12/08/cppday18/).
 
