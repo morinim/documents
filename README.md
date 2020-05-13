@@ -7,7 +7,10 @@ Although much attention has been paid to writing these files, there may be error
 
 ## License
 
-[This work](https://github.com/morinim/documents) by Manlio Morini is licensed under [CC BY-SA 4.0 CC](https://creativecommons.org/licenses/by-sa/4.0/?ref=ccchooser).
+**Unless it is otherwise stated**:
+
+- documents are licensed under [CC BY-SA 4.0 CC](https://creativecommons.org/licenses/by-sa/4.0/?ref=ccchooser);
+- code is licensed under [MPL v2](https://www.mozilla.org/en-US/MPL/2.0/).
 
 ---
 
