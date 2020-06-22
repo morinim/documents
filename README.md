@@ -1,5 +1,5 @@
 # Documents
-A repository of various articles, posts, papers and code snippets.
+A repository of various articles, posts, papers (some in Italian, others in English) and code snippets.
 
 ## Disclaimer
 
