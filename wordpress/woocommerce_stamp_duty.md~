@@ -1,0 +1,7 @@
+# How to add a stamp duty in WooCommerce
+
+According to the Italian tax law, stamp duty (*imposta di bollo*) is applicable on invoices (both paper and electronic) in all cases where the relevant transaction is Value Added Tax ([VAT](https://en.wikipedia.org/wiki/Value-added_tax)) excluded, non-taxable or VAT exempt, for a value exceeding a given treshold (currently € 77.47).
+
+The amount due for the invoices issued is a fixed value (currently € 2).
+
+How could I check if the stamp duty is applicable and add/display the additional fee in WooCommerce cart page?
