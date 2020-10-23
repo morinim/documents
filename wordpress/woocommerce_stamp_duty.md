@@ -6,6 +6,50 @@ The amount due for the invoices issued is a fixed value (currently € 2).
 
 We would like to check if the stamp duty is applicable and add/display the additional fee in the WooCommerce cart.
 
+### EXAMPLE 1
+```
+PRODUCT  PRICE  QUANTITY  TOTAL            TAXABLE
+-------------------------------
+0001      10           7     70            NO
+-------------------------------
+0002      30           1     30            YES
+-------------------------------
+
+                    Cart totals
+    ---------------------------
+    CART SUBTOTAL 100
+    ---------------------------
+    SHIPPING      Free shipping
+    ---------------------------
+    ORDER TOTAL   100
+    ---------------------------
+```
+
+Here the non taxable subtotal is `70` so stamp duty is not due (`70 <= 77.47`).
+
+### EXAMPLE 2
+```
+PRODUCT  PRICE  QUANTITY  TOTAL            TAXABLE 
+-------------------------------
+0001      10           8     80            NO
+-------------------------------
+0002      30           1     30            YES
+-------------------------------
+
+                    Cart totals
+    ---------------------------
+    CART SUBTOTAL 110
+    ---------------------------
+    SHIPPING      Free shipping
+    ---------------------------
+    STAMP DUTY    2
+    ---------------------------
+    ORDER TOTAL   112
+    ---------------------------
+```
+
+Here the non taxable subtotal is `80` so stamp duty is due (`80 > 77.47`).
+
 ## Generalities
 
 WooCommerce has a built-in function in the [cart object](https://woocommerce.github.io/code-reference/classes/WC-Cart.html) for adding fees (`woocommerce_cart_calculate_fees`).
