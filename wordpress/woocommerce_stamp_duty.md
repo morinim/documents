@@ -6,7 +6,7 @@ The amount due for the invoices issued is a fixed value (currently € 2).
 
 We would like to check if the stamp duty is applicable and add/display the additional fee in the WooCommerce cart.
 
-### EXAMPLE 1
+#### Example 1
 ```
 PRODUCT  PRICE  QUANTITY  TOTAL            TAXABLE
 -------------------------------
@@ -27,7 +27,7 @@ PRODUCT  PRICE  QUANTITY  TOTAL            TAXABLE
 
 Here the non taxable subtotal is `70` so stamp duty is not due (`70 <= 77.47`).
 
-### EXAMPLE 2
+#### Example 2
 ```
 PRODUCT  PRICE  QUANTITY  TOTAL            TAXABLE 
 -------------------------------
