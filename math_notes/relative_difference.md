@@ -43,9 +43,9 @@ Now consider these examples, where one of the two numbers being compared is zero
 - the relative difference between `1000` and `0` is `(1000-0)/500 = 2`
 - the relative difference between `.000001` and `0` is `(.000001-0)/.0000005 = 2`.
 
-Hold on. In all cases, the relative difference between zero and another number is `2`. Even when the other number is very small, the difference is still `2`. Does this make sense?
+Hold on. In all cases, the relative difference between `0` and another number is `2`. Even when the other number is very small, the difference is still `2`. Does this make sense?
 
-Ordinarily, we think of smaller numbers as being closer to zero. This means that the 3ʳᵈ example should have yielded a smaller relative difference. But it didn't.
+Ordinarily, we think of smaller numbers as being closer to `0`. This means that the 3ʳᵈ example should have yielded a smaller relative difference (but it didn't).
 
 ## How Calculations Are Actually Performed
 
