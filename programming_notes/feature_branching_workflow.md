@@ -48,11 +48,19 @@ main              ◯─◯─◯─◯─◯─◯─⚫ lo squash merge commit
 nuova funzionalita  └◯─◯─◯─┘ 
 ```
 
-In alternativa si può utilizzare l'opzione `--no-ff` così da creare esplicitamente un *merge commit* che rappresenti un "punto di giunzione" tra `nuova_funzionalita` e `main` che identifichi, anche visivamente, un nuovo rilascio in produzione.
+In alternativa si può utilizzare l'opzione `--no-ff` così da creare esplicitamente un *merge commit* che rappresenti un "punto di giunzione" tra `nuova_funzionalita` e `main` che identifichi, anche visivamente, un nuovo rilascio in produzione:
+
+```
+main              ◯─◯─◯─◯─◯─◯─┬  
+                    │      ┌──┘   
+nuova funzionalita  └◯─◯─◯─┘ 
+```
 
 Dopo il *merge* è buona norma eliminare il ramo di sviluppo relativo alla funzionalità completata (eventualmente, anche dal *repository* centrale):
 
 ```shell
-git branch -d nuova-funzionalita
-git push origin --delete nuova-funzionalita
+git branch -d nuova_funzionalita
+git push origin --delete nuova_funzionalita
 ```
+
+Il primo comando da un *warning* proprio relativo al fatto che il ramo di sviluppo è stato cancellato solo localmente.
