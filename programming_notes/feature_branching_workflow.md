@@ -65,7 +65,7 @@ git push origin --delete nuova_funzionalita
 
 Il primo comando potrebbe mostrare un *warning* proprio relativo al fatto che il ramo di sviluppo è stato cancellato solo localmente.
 
-La situazione finale sarà nel caso di *squash*:
+La situazione finale sarà, nel caso di *squash*:
 
 ```
 ┈◯─◯─◯─◯─◯─◯─⚫  <┄┄┄ main
@@ -79,4 +79,4 @@ mentre nel caso di *no fast forward*:
    └◯─◯─◯─┘         
 ```
 
-In questo caso il ramo di sviluppo ha perso il suo nome ma non viene effettivamente cancellato.
+il ramo di sviluppo ha perso il suo nome ma non viene effettivamente cancellato.
