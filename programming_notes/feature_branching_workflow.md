@@ -40,7 +40,7 @@ git merge --squash nuova_funzionalita
 git push origin main
 ```
 
-L'opzione `--squash` aggiunge tutte le modifiche apportate in `nuova_funzionalita` in un singolo commit nel ramo `main`:
+L'opzione `--squash` aggiunge tutte le modifiche apportate in `nuova_funzionalita` in un singolo *commit* nel ramo `main`:
 
 ```
 ┈◯─◯─◯─◯─◯─◯─⚫  <┄┄┄ main                lo squash merge commit contiene tutte le modifiche di `nuova_funzionalita`
