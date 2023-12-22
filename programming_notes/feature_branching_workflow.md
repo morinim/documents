@@ -63,7 +63,7 @@ git branch -d nuova_funzionalita
 git push origin --delete nuova_funzionalita
 ```
 
-Il primo comando da un *warning* proprio relativo al fatto che il ramo di sviluppo è stato cancellato solo localmente.
+Il primo comando potrebbe mostrare un *warning* proprio relativo al fatto che il ramo di sviluppo è stato cancellato solo localmente.
 
 La situazione finale sarà nel caso di *squash*:
 
