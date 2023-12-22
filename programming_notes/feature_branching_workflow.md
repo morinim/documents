@@ -43,12 +43,12 @@ git push origin main
 L'opzione `--squash` aggiunge tutte le modifiche apportate in `nuova_funzionalita` in un singolo commit nel ramo `main`:
 
 ```
-main              ◯─◯─◯─◯─◯─◯─⚫ lo squash merge commit contiene tutte le modifiche di *nuova_funzionalita*
-                    │      ┌──┘   
-nuova funzionalita  └◯─◯─◯─┘ 
+┈◯─◯─◯─◯─◯─◯─⚫  <┄┄┄ main                 *lo squash merge commit contiene tutte le modifiche di `nuova_funzionalita`*
+ │      ┌──┘   
+ └◯─◯─◯─┘        <┄┄┄ nuova_funzionalita
 ```
 
-In alternativa si può utilizzare l'opzione `--no-ff` così da creare esplicitamente un *merge commit* che rappresenti un "punto di giunzione" tra `nuova_funzionalita` e `main` che identifichi, anche visivamente, un nuovo rilascio in produzione:
+In alternativa si può utilizzare l'opzione `--no-ff` (*no fast forward*) così da creare esplicitamente un *merge commit* che rappresenti un "punto di giunzione" tra `nuova_funzionalita` e `main` che identifichi, anche visivamente, un nuovo rilascio in produzione:
 
 ```
 main              ◯─◯─◯─◯─◯─◯─┬  
@@ -64,3 +64,18 @@ git push origin --delete nuova_funzionalita
 ```
 
 Il primo comando da un *warning* proprio relativo al fatto che il ramo di sviluppo è stato cancellato solo localmente.
+
+La situazione finale sarà nel caso di *squash*:
+
+```
+main              ◯─◯─◯─◯─◯─◯─⚫ lo squash merge commit contiene tutte le modifiche di *nuova_funzionalita*
+```
+
+mentre nel caso di *no fast forward*:
+
+
+```
+main              ◯─◯─◯─◯─◯─◯─┬  
+                    │      ┌──┘   
+                    └◯─◯─◯─┘         
+```
