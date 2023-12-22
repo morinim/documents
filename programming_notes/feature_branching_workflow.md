@@ -36,11 +36,19 @@ Nel momento in cui la nuova funzionalità è pronta per essere rilasciata in pro
 ```shell
 git switch main
 git pull
-git merge --no-ff nuova-funzionalita
+git merge --squash nuova_funzionalita
 git push origin main
 ```
 
-Solitamente viene utilizzata l'opzione `--no-ff` per il *merge* così da creare esplicitamente un *merge commit* che rappresenti un "punto di giunzione" tra il *feature branch* e *main* che identifichi, anche visivamente, un nuovo rilascio in produzione.
+L'opzione `--squash` aggiunge tutte le modifiche apportate in `nuova_funzionalita` in un singolo commit nel ramo `main`:
+
+```
+main              ◯─◯─◯─◯─◯─◯─⚫ lo squash merge commit contiene tutte le modifiche di *nuova_funzionalita*
+                    │      ┌──┘   
+nuova funzionalita  └◯─◯─◯─┘ 
+```
+
+In alternativa si può utilizzare l'opzione `--no-ff` così da creare esplicitamente un *merge commit* che rappresenti un "punto di giunzione" tra `nuova_funzionalita` e `main` che identifichi, anche visivamente, un nuovo rilascio in produzione.
 
 Dopo il *merge* è buona norma eliminare il ramo di sviluppo relativo alla funzionalità completata (eventualmente, anche dal *repository* centrale):
 
