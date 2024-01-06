@@ -7,3 +7,4 @@ A [`std::unique_lock`](https://en.cppreference.com/w/cpp/thread/unique_lock) can
 
 ### Details
 - [std::scoped_lock or std::unique_lock or std::lock_guard?](https://stackoverflow.com/q/58443465/3235496)
+- [Howard Hinnant's answer to std::lock_guard or std::scoped_lock?](https://stackoverflow.com/a/60172828/3235496)
