@@ -23,7 +23,7 @@ git branch --set-upstream-to=origin/nuova_funzionalita nuova_funzionalita
 
 così che ogni futuro comando `git pull`, quando localmente è attivo il ramo `nuova_funzionalita`, faccia automaticamente riferimento a `origin/nuova_funzionalita`. In altre parole stiamo dicendo a `git` di voler mantenere in sincronia la ramificazione locale e quella remota.
 
-Se non facciamo così dobbiamo sembre aver presente in quale ramo locale siamo e quali *commit* vogliamo importare specificandolo nel comando `git pull` (così come per `git push` e `git fetch`).
+Se non facciamo così dobbiamo sempre aver presente in quale ramo locale siamo e quali *commit* vogliamo importare specificandolo nel comando `git pull` (così come per `git push` e `git fetch`).
 
 Lo stesso risultato si poteva ottenere della ramificazione nel *repository* centrale:
 
