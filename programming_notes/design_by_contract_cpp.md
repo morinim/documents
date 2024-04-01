@@ -97,13 +97,9 @@ private:
 public:
   bool is_valid() const
   {
-#if defined(NDEBUG)
-    return true;
-#else
     return m_terminalMap.count() <= MAX_TERMINALS_PER_MANAGER
            && m_managerType < MAX_MANAGER_TYPES
            && m_faultManager.IsValid();
-#endif
   }
 
   Status AddTerminal(int terminalId, int type)
@@ -120,10 +116,7 @@ public:
     {
       // count() returned zero, so no entries are present in the map
       Terminal *pTerm = new Terminal(terminalId, type);
-     
-      // Make sure that the newly created terminal is in consistent state
-      IS_VALID(pTerm);
-             
+           
       // Since map overloads the array operator [ ], it gives 
       // the illusion of indexing into an array. The following
       // line makes an entry into the map
@@ -144,7 +137,7 @@ public:
     // 3. The manager should not be controlling more terminals
     //    than allowed
     // 4. Make sure correct return code is being returned.
-    IS_VALID(this);
+    Ensures(is_valid());
     Ensures(FindTerminal(termId));
     Ensures(m_terminalMap.count() <= MAX_TERMINALS_PER_MANAGER));
     Ensures(status == SUCCESS || status == FAILURE);
@@ -169,10 +162,6 @@ public:
     {
       // Save the pointer that is being deleted from the map
       Terminal *pTerm = m_terminalMap[terminalId]; 
-          
-      // Make sure that terminal object being deleted is in a consistent
-      // state
-      IS_VALID(pTerm);         
        
       // Erase the entry from the map. This just frees up the memory for
       // the pointer. The actual object is freed up using delete
@@ -191,7 +180,7 @@ public:
     // 3. Terminal Manager is in a consistent state
     Ensures(FindTerminal(terminalId) == NULL);
     Ensures(status == SUCCESS || status == FAILURE);
-    IS_VALID(this);     
+    Ensures(is_valid());     
           
     return status;
   }
