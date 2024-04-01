@@ -37,24 +37,23 @@ The framework consists of the following macros that are available only in the de
 #  define Expects(expression)
 #  define Ensures(expression)
 #else
-/// Preconditions can be stated in many ways, including comments, `if`
-/// statements and `assert()`. This can make them hard to distinguish from
-/// ordinary code, hard to update, hard to manipulate by tools and may have
-/// the wrong semantics (do you always want to abort in debug mode and check
-/// nothing in productions runs?).
-/// \see C++ Core Guidelines I.6 <https://github.com/isocpp/CppCoreGuidelines/>
+// Preconditions can be stated in many ways, including comments, `if`
+// statements and `assert()`. This can make them hard to distinguish from
+// ordinary code, hard to update, hard to manipulate by tools and may have
+// the wrong semantics (do you always want to abort in debug mode and check
+// nothing in productions runs?).
+// \see C++ Core Guidelines I.6 <https://github.com/isocpp/CppCoreGuidelines/>
 #  define Expects(expression)  assert(ULTRA_LIKELY(expression))
 
-/// Postconditions are often informally stated in a comment that states the
-/// purpose of a function; `Ensures()` can be used to make this more
-/// systematic, visible and checkable.
-/// Postconditions are especially important when they relate to something that
-/// isn't directly reflected in a returned result, such as a state of a data
-/// structure used.
-/// \note
-/// Postconditions of the form "this resource must be released" are best
-/// expressed by RAII.
-/// \see C++ Core Guidelines I.8 <https://github.com/isocpp/CppCoreGuidelines/>
+// Postconditions are often informally stated in a comment that states the
+// purpose of a function; `Ensures()` can be used to make this more
+// systematic, visible and checkable.
+// Postconditions are especially important when they relate to something that
+// isn't directly reflected in a returned result, such as a state of a data
+// structure used.
+// NOTE. Postconditions of the form "this resource must be released" are best
+// expressed by RAII.
+// \see C++ Core Guidelines I.8 <https://github.com/isocpp/CppCoreGuidelines/>
 #  define Ensures(expression)  assert(ULTRA_LIKELY(expression))
 #endif
 ```
@@ -98,9 +97,13 @@ private:
 public:
   bool is_valid() const
   {
+#if defined(NDEBUG)
+    return true;
+#else
     return m_terminalMap.count() <= MAX_TERMINALS_PER_MANAGER
            && m_managerType < MAX_MANAGER_TYPES
            && m_faultManager.IsValid();
+#endif
   }
 
   Status AddTerminal(int terminalId, int type)
