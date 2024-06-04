@@ -3,7 +3,7 @@ TL;DR
 No matter how simple your code may be, there's no substitute for testing it to make sure it's actually doing what you think it is.
 ---
 
-When asked to perform hold-out validation, Vita takes the input `dataframe`, containing all the available data, and moves a given percentage of random examples to a validation `dataframe`.
+When asked to perform hold-out validation, [Vita](github.com/morinim/vita) takes the input `dataframe`, containing all the available data, and moves a given percentage of random examples to a validation `dataframe`.
 
 Initially the two steps of the partitioning were:
 
@@ -53,18 +53,52 @@ The probability that $i$-th element goes to second last position can be proved t
 
     The probability of last element going to second last position is:
 
-    $$
-    \mathbb{A} = "last\ element\ doesn't\ stay\ at\ its\ original\ position"\\
-    \mathbb{B} = "index\ picked\ in\ previous\ step\ is\ picked\ again"\\
-    \begin{eqnarray}P(\mathbb{A}) \cdot P(\mathbb{B}) = \frac{n-1}{n} \cdot \frac{1}{n-1} = \frac{1}{n}\end{eqnarray}
-    $$
+    $$\mathbb{A} = "last\ element\ doesn't\ stay\ at\ its\ original\ position"$$
+
+    $$\mathbb{B} = "index\ picked\ in\ previous\ step\ is\ picked\ again"$$
+
+    $$P(\mathbb{A}) \cdot P(\mathbb{B}) = \frac{n-1}{n} \cdot \frac{1}{n-1} = \frac{1}{n}$$
 
 2. $0 < i < n-1$ (**index of non-last**).
 
     The probability of $i$-th element going to second position is:
 
-    $$
-    \mathbb{A} = "i-th\ element\ is\ not\ picked\ in\ previous\ iteration"\\
-    \mathbb{B} = "i-th\ element\ is\ picked\ in\ this\ iteration"\\
-    \begin{eqnarray}P(\mathbb{A}) \cdot P(\mathbb{B}) = \frac{n-1}{n} \cdot \frac{1}{n-1} = \frac{1}{n}\end{eqnarray}
-    $$
+    $$\mathbb{A} = "i-th\ element\ is\ not\ picked\ in\ previous\ iteration"$$
+
+    $$\mathbb{B} = "i-th\ element\ is\ picked\ in\ this\ iteration"$$
+
+    $$P(\mathbb{A}) \cdot P(\mathbb{B}) = \frac{n-1}{n} \cdot \frac{1}{n-1} = \frac{1}{n}$$
+
+The proof can be generalized for any other position.
+
+The algorithm can also be rewritten in a recursive way:
+
+```Python
+from random import randint
+
+def shuffle(arr):
+    def shuffle(arr, N):
+        j = randint(0, N-1)
+
+        arr[N-1], arr[j] = arr[j], arr[N-1]
+
+        if N > 2:
+            shuffle(arr, N-1)
+
+    shuffle(arr, len(arr))
+    return arr
+```
+
+Now proving correctness isn't too difficult. The last element is chosen with uniform probability. Recursively, given fixed values for `arr[i+1..N-1]`, `arr[i]` is chosen from the remaining elements uniformly as well. Overall, this means that all $N!$ permutations are equally probable.
+
+## Considerations
+Despite its simplicity, when developers attempt to code this from scratch it's extremely common that they make ‘off by one’ errors, which results in a notably biased permutation.
+
+Actually this was the case for the initial implementation of the algorithm in Vita: one of the element of the input `dataframe` was always selected.
+
+That is the same old story: it's possible for the code to be both simple and wrong and everything must be tested.
+
+## See also
+- [The Danger of Naïveté](https://blog.codinghorror.com/the-danger-of-naivete)
+- [Fisher Yates shuffle](https://bost.ocks.org/mike/shuffle/)
+- [Shuffle a given array using Fisher–Yates shuffle Algorithm](https://www.geeksforgeeks.org/shuffle-a-given-array-using-fisher-yates-shuffle-algorithm/)
