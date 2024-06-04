@@ -1,6 +1,8 @@
 ---
+
 TL;DR
 No matter how simple your code may be, there's no substitute for testing it to make sure it's actually doing what you think it is.
+
 ---
 
 When asked to perform hold-out validation, [Vita](github.com/morinim/vita) takes the input `dataframe`, containing all the available data, and moves a given percentage of random examples to a validation `dataframe`.
