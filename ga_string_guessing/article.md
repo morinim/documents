@@ -55,7 +55,7 @@ It works, but not optimally: [schemata](https://en.wikipedia.org/wiki/Schema_(ge
 
 Also:
 
-- `randint(0, len(target))` returns a random integer `N` such that `0 <= N <= len(target)` and when `random_index == len(target)` the `crossover` functions returns two copies of the first parent;
+- `randint(0, len(target))` returns a random integer `N` such that `0 <= N <= len(target)` and when `random_index == len(target)`, the `crossover` functions returns two copies of the first parent;
 - `RAND_NUM` is generated "once and for all" so an instance of the program will work in a binary way: always / never performing crossover.
 
 A possible implementation follows:
@@ -95,7 +95,7 @@ def generateNewPopulation(population):
     # ...
 ```
 
-Here we have a `MUTATION_RATE` parameter that is never used. Mutation always happens and it's probably too much.
+Here we have a `MUTATION_RATE` parameter that is never used. Mutation always occurs, likely too frequently.
 
 Usually (it's not mandatory) a [mutation operator](https://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)) involves a probability that an arbitrary bit in a genetic sequence will be changed from its original state. A common method of implementing the mutation operator involves generating a random variable for each bit in a sequence. This random variable tells whether or not a particular bit will be modified. This mutation procedure, based on the biological *point mutation*, is called *single point mutation*.
 
@@ -128,7 +128,7 @@ def generate_base_population(size):
     return population
 ```
 
-The fitness of an individual is in the `[0; len(target)]` range. Using `-1` (instead of `0`) allows to identify unscored individuals (and more advanced implementation based on lazy-evaluation).
+The fitness of an individual is in the `[0; len(target)]` range. Using `-1` (instead of `0`) helps identify unscored individuals (and more advanced implementation based on lazy-evaluation).
 
 ## Roulette-wheel selection (fitness proportionate selection)
 
