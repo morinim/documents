@@ -151,11 +151,11 @@ def generateNewPopulation(population):
         # ...
 ```
 
-The algorithm has a `O(n)` complexity. Having to pick many values with the same set of weights, we could also turn this solution into a `O(log(n))` solution by using a binary search, or even an `O(1)` solution by using some kind of look-up table (see  [Wikipedia - Fitness Proportionate Selection](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)).
+The algorithm has `O(n)` complexity. Having to pick many values with the same set of weights, we could also turn this solution into a `O(log(n))` solution by using a binary search, or even an `O(1)` solution by using some kind of look-up table (see  [Wikipedia - Fitness Proportionate Selection](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)).
 
 ## Alternative selection method
 
-Initially only part of the issues had been identified: the calls to the selection function (`chooseChild`) were completely missing and this seemed the main problem.
+Initially, only some of the issues were identified: the calls to the selection function (`chooseChild`) were completely missing and this seemed the main problem.
 
 A selection procedure was suggested ([tournament selection](https://en.wikipedia.org/wiki/Tournament_selection)):
 
