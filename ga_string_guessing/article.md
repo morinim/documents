@@ -51,7 +51,7 @@ Does the description match the code? Only partially.
 
 <img src="one_point_crossover2.png" width="400" alt="Wrong single-point crossover" />
 
-It works but in a less than optimal manner: [schemata](https://en.wikipedia.org/wiki/Schema_(genetic_algorithms)) in the second child are completely messed.
+It works, but not optimally: [schemata](https://en.wikipedia.org/wiki/Schema_(genetic_algorithms)) in the second child are completely messed.
 
 Also:
 
