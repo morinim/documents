@@ -173,6 +173,6 @@ It's the *double nature* of genetic algorithms: if there is a way to crash your 
 
 ## Notes
 
-The complete Python program is available [here](https://github.com/morinim/documents/blob/master/ga_string_guess/ga.py).
+The complete Python program is available [here](https://github.com/morinim/documents/blob/master/ga_string_guessing/ga.py).
 
 An efficient implementantion using the [Ultra framework](https://github.com/morinim/ultra/) is described [here](https://github.com/morinim/ultra/wiki/string_guessing_tutorial).
