@@ -15,7 +15,7 @@ A user was trying to understand how to implement a genetic algorithm for string 
 
 Specifically the program attempted to guess a secret phrase (I'm sorry, not [`"Methinks it is like a weasel"`](https://en.wikipedia.org/wiki/Weasel_program), just `"Hello world"`) by evolving a random set of initial guesses.
 
-The task is a good way to introduce oneself to GAs since a solution doesn't require too much code. This is not to say it's a trivial task: many details are interesting and there are several error-prone choices.
+This task is a good introduction to GAs, as it doesn't require extensive code. This is not to say it's a trivial task: many details are interesting and there are several error-prone choices.
 
 The code didn't work because of:
 
