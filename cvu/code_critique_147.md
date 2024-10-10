@@ -1,5 +1,5 @@
 ---
-# Code Critique Competition 148
+# Code Critique Competition 147
 
 By Roger Orr, Manlio Morini, Paul Floyd, James Holland, William Grace
 
@@ -11,7 +11,7 @@ Set and collated by Roger Orr. A book prize is awarded for the best entry.
 Please note that participation in this competition is open to all members, whether novice or expert. Readers are also encouraged to comment on published entries, and to supply their own possible code samples for the competition (in any common programming language) to scc@accu.org.
 
 
-## Last issue’s code
+## Last issue's code
 
 > I've written a very simple html escape processor but other people are reporting it sometimes doesn't work for them. What can I do? My test harness works fine.
 
@@ -197,6 +197,23 @@ void escape(std::istream &is, std::ostream &os) {
 }
 ```
 
+[CUT]
+
+## The winner of CCC 147
+
+All the entrants correctly identified the problematic use of the iterator after a call to `insert` that causes reallocation. The solutions presented were either to write to a separate output (and thereby avoid inserting into the string being iterated over), or to update the iterator with the returned value from the call to `insert`.
+
+Paul gives some useful commentary on the debugging process he followed when identifying the problem in the original code.
+
+Both Manlio and James pointed out the problem with dereferencing the one past-the-end iterator and provide safe alternatives, either using `end()` or alternatively, in Manlio’s entry, by using a raw pointer (as in this case doing so avoids the one-past-the-end issue that the iterator has).
+
+William, Manlio and James also both pointed out that the `escape` map is modified by the original code as this uses `operator[]` to look up the replacement sequence, which adds an entry if the key is not already in the map. Both their entries fixed this, and then made the variable `const` to prevent any inadvertent modifications.
+
+Paul asks some good questions about performance with the code; he suggests using a `switch` statement and also measuring the performance to see if the proposed change actually helps. Manlio also provided a changed implementation that writes directly into the output stream and therefore avoids creating an intermediate string value for each edited line; this may help with performance if this is a problem in the use case of the original code.
+
+William analyses what the program as a whole achieves, and simplifies the logic considerably to provide this. He also suggests using the numeric html encoding, which works very elegantly for the ASCII values we are catering for. The result is a very short solution (use of range-`for` could make it even shorter) that is ‘obviously correct’. When working on complex programs, it is sometimes easy to focus on trying to fix the existing logic when rewriting it might avoid the bug completely; as happens in this case.
+
+The critiques each covered slightly different things, and I found it hard to pick the winner. However, I eventually settled on Manlio’s entry as the winner, so congratulations to him on this, his first entry to the Code Critique competition!
 
 [1]: https://github.com/microsoft/STL/issues/4346
 [2]: http://projects.webappsec.org/w/page/13246949/Null%20Byte%20Injection
