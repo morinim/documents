@@ -10,8 +10,6 @@ Set and collated by Roger Orr. A book prize is awarded for the best entry.
 
 Please note that participation in this competition is open to all members, whether novice or expert. Readers are also encouraged to comment on published entries, and to supply their own possible code samples for the competition (in any common programming language) to scc@accu.org.
 
-Note: if you would rather not have your critique visible online please inform me. (Email addresses are not publicly visible.)
-
 
 ## Last issue’s code
 
