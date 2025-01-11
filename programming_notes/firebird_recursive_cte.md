@@ -241,7 +241,15 @@ R_0                 R_1                  R_2
 
 ### Final Aggregation
 
-The query groups and sums costs by code to produce the desired result:
+The query
+
+```sql
+select   CODE, sum(COST)
+from     COMPUTED_COSTS
+group by CODE
+```
+
+groups and sums costs by code to produce the desired result:
 
 | CODE | COST  |
 | ---  | ---   |
