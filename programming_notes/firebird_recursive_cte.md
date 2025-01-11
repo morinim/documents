@@ -35,8 +35,8 @@ A recursive CTE consists of three parts:
 
 The execution order of a recursive CTE proceeds as follows:
 
-- execute the **anchor member** to form the base result set. Use this result for the next iteration;
-- execute the **recursive member** with the input result set from the previous iteration and return a sub-result set. Repeat until the termination condition is met;
+- execute the **anchor member** to form the base result set ($R_0$). Use this result for the next iteration;
+- execute the **recursive member** with the input result set from the previous iteration ($R_{i-1}$) and return a sub-result set. Repeat until the termination condition is met;
 - combine all result sets using `union all` operator to produce the final result set.
 
 The following flowchart illustrates the execution of a recursive CTE:
@@ -180,7 +180,7 @@ select CODE, BASE_COST as COST
 from   WORKS_WITH_BASE_COSTS
 ```
 
-selects the base cost for each work, resulting in the initial set:
+selects the base cost for each work, resulting in the initial set ($R_0$):
 
 | CODE | COST |
 | ---  | ---  |
@@ -202,7 +202,7 @@ from   COMPUTED_COSTS CC
        join WORKS_WITH_BASE_COSTS W on WS.PARENT_CODE = W.CODE
 ```
 
-calculates the cost for parent nodes by combining the costs of their child nodes, adjusted by the quantity:
+calculates the cost for parent nodes by combining the costs of their child nodes, adjusted by the quantity, producing $R_1$:
 
 | CODE | COST  |
 | ---  | ---   |
@@ -213,7 +213,7 @@ calculates the cost for parent nodes by combining the costs of their child nodes
 | 5    | 100.0 |
 | 7    |   0.0 |
 
-The next iteration produces:
+The next iteration produces $R_2$:
 
 | CODE | COST  |
 | ---  | ---   |
@@ -222,7 +222,7 @@ The next iteration produces:
 | 7    |  50.0 |
 | 7    | 100.0 |
 
-We execute again the *recursive member*. This time the only remaining code in `COMPUTED_COST` (`7`) isn't child of any node and the first `join` (`join WORKS_STRUCT WS on CC.CODE = WS.CHILD_CODE`) produces an empty set. The recursion is stopped.
+At this point, the remaining code (`7`) is not the child of any node. The first `join` in the recursive member produces an empty set, stopping the recursion.
 
 The final result is $R_0 \cup R_1 \cup R_2$:
 
