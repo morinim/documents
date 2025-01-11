@@ -224,7 +224,7 @@ The next iteration produces:
 
 We execute again the *recursive member*. This time the only remaining code in `COMPUTED_COST` (`7`) isn't child of any node and the first `join` (`join WORKS_STRUCT WS on CC.CODE = WS.CHILD_CODE`) produces an empty set. The recursion is stopped.
 
-The final result is set $R = R_0 \union R_1 \union R_2$ i.e.:
+The final result is set $R = R_0 \cup R_1 \cup R_2$ i.e.:
 
 ```
 R_0                 R_1                  R_2
