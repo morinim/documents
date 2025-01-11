@@ -212,9 +212,8 @@ calculates the cost for parent nodes by combining the costs of their child nodes
 | 5    |  50.0 |
 | 5    | 100.0 |
 | 7    |   0.0 |
-```
 
-Next iteration produces::
+The next iteration produces:
 
 | CODE | COST  |
 | ---  | ---   |
