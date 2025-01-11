@@ -178,7 +178,7 @@ The **anchor member**
 ```sql
 select CODE, BASE_COST as COST
 from   WORKS_WITH_BASE_COSTS
-``
+```
 
 selects the base cost for each work, resulting in the initial set:
 
