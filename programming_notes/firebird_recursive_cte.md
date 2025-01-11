@@ -25,7 +25,7 @@ select *
 from   CTE_QUERY
 ```
 
-In general, a recursive CTE consists of three parts:
+A recursive CTE consists of three parts:
 
 - **anchor member**. An initial query that returns the base result set of the CTE;
 - **recursive member**. A query that references the CTE itself and is combined with the anchor member using the `union all` operator;
