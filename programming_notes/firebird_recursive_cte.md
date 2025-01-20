@@ -98,7 +98,6 @@ create table WORKS_STRUCT
 | 5    |  0.0      |
 | 6    | 20.0      |
 | 7    |  0.0      |
-| 8    |  0.0      |
 
 **WORKS_STRUCT**
 
@@ -154,17 +153,15 @@ The following query calculates the total cost:
 ```sql
 with recursive COMPUTED_COSTS(CODE, COST) as (
   -- anchor member
-  select CODE, BASE_COST as COST
+  select CODE, BASE_COST
   from   WORKS_WITH_BASE_COSTS
 
   union all
 
   -- recursive member
-  select WS.PARENT_CODE,
-         CC.COST * WS.QUANTITY + W.BASE_COST
+  select WS.PARENT_CODE, CC.COST * WS.QUANTITY
   from   COMPUTED_COSTS CC
          join WORKS_STRUCT WS on CC.CODE = WS.CHILD_CODE
-         join WORKS_WITH_BASE_COSTS W on WS.PARENT_CODE = W.CODE
 )
 select   CODE, sum(COST)
 from     COMPUTED_COSTS
@@ -195,11 +192,9 @@ selects the base cost for each work, resulting in the initial set ($R_0$):
 The **recursive member**:
 
 ```sql
-select WS.PARENT_CODE,
-       CC.COST * WS.QUANTITY + W.BASE_COST
+select WS.PARENT_CODE, CC.COST * WS.QUANTITY
 from   COMPUTED_COSTS CC
        join WORKS_STRUCT WS on CC.CODE = WS.CHILD_CODE
-       join WORKS_WITH_BASE_COSTS W on WS.PARENT_CODE = W.CODE
 ```
 
 calculates the cost for parent nodes by combining the costs of their child nodes, adjusted by the quantity, producing $R_1$:
@@ -261,6 +256,8 @@ groups and sums costs by code to produce the desired result:
 | 6    |  20.0 |
 | 7    | 550.0 |
 
+For simplicity in calculations, this example assumes that only leaves have `BASE_COST<>0`. However, this is not a requirement.
+
 ## Limitations
 
 - Recursive queries can become expensive for deep or wide hierarchies.
@@ -269,3 +266,7 @@ groups and sums costs by code to produce the desired result:
 ## Conclusion
 
 Recursive CTEs are a powerful tool for handling hierarchical data in Firebird. This example demonstrates how they can be used to compute costs for a tree-like structure efficiently and concisely.
+
+## References
+
+- [Recursive CTE in Firebird for calculating aggregate costs in hierarchical data](https://stackoverflow.com/q/79348486/3235496)
