@@ -10,9 +10,10 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# POSIX-strict SlackBuild-style script for `gcc` under `/opt`.
+
 # Abort on error and treat unset vars as errors.
-# (Note: `set -u` is POSIX; `set -e` is POSIX but does not propagate into
-# subshells).
+# (Note: `set -u` is POSIX; `set -e` is POSIX but does not propagate into subshells).
 set -eu
 
 if [ "$#" -eq 0 ]; then
@@ -38,7 +39,7 @@ if [ ! -f "$srcdir/configure" ] || [ ! -r "$srcdir/configure" ]; then
   exit 1
 fi
 
-echo "Source directory: $srcdir"
+echo "Source directory:      $srcdir"
 echo "Destination directory: $destdir"
 
 SLKCFLAGS="-O2 -fPIC -fno-plt -pipe"
