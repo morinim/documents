@@ -68,9 +68,13 @@ Each version lives in its own prefix, and nothing else is modified.
 
 ## Adjusting your environment
 
-To use the newly installed compiler:
+To use the newly installed compiler, add the following lines to a user's `.bashrc`:
 
 ```
 export PATH=/opt/<version>/bin:$PATH
 export LD_LIBRARY_PATH=/opt/<version>/lib64:$LD_LIBRARY_PATH
 ```
+
+## Licence
+
+This script is released under a permissive BSD-style licence; see the script header for details.
