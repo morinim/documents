@@ -171,8 +171,11 @@ f [ -n "$FOUND_GCC" ]; then
     "--sysroot=$FOUND_GCC" \
     > "$CFGDIR/clang.cfg"
 
-  cp "$CFGDIR/clang.cfg" "$CFGDIR/clang++.cfg"
-
+  # Create symlink for clang++
+  (
+    cd "$CFGDIR" || exit 1
+    ln -sf clang.cfg clang++.cfg
+  )
   echo "Generated configuration files with detected triple: $TRIPLE_DIR"
   echo "  $CFGDIR/clang.cfg"
   echo "  $CFGDIR/clang++.cfg"
