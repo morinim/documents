@@ -145,4 +145,37 @@ cmake -G "Unix Makefiles" \
 make $NUMJOBS
 make install
 
+# Create clang.cfg and clang++.cfg inside the installed bin directory
+f [ -n "$FOUND_GCC" ]; then
+  GCC_VER=$(basename "$FOUND_GCC" | sed 's/gcc-//')
+
+  # Detect the GCC target triple (whatever directory exists inside lib64/gcc/)
+  TRIPLE_DIR=""
+  for d in "$FOUND_GCC/lib64/gcc/"*; do
+    if [ -d "$d/$GCC_VER" ]; then
+      TRIPLE_DIR=$(basename "$d")
+      break
+    fi
+  done
+
+  if [ -z "$TRIPLE_DIR" ]; then
+    echo "Error: Could not detect GCC target triple under $FOUND_GCC/lib64/gcc"
+    exit 1
+  fi
+
+  GCC_TOOLCHAIN_DIR="$FOUND_GCC/lib64/gcc/$TRIPLE_DIR/$GCC_VER"
+  CFGDIR="$destdir/bin"
+
+  printf '%s\n' \
+    "--gcc-install-dir=$GCC_TOOLCHAIN_DIR" \
+    "--sysroot=$FOUND_GCC" \
+    > "$CFGDIR/clang.cfg"
+
+  cp "$CFGDIR/clang.cfg" "$CFGDIR/clang++.cfg"
+
+  echo "Generated configuration files with detected triple: $TRIPLE_DIR"
+  echo "  $CFGDIR/clang.cfg"
+  echo "  $CFGDIR/clang++.cfg"
+fi
+
 echo "=== Installation completed successfully at $destdir ==="
