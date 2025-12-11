@@ -117,11 +117,7 @@ This means:
 - `/opt/llvm-AA.B.C/bin` is the next;
 - system tools are last.
 
-Also
-
-- Clang finds the `/opt/gcc-XX.Y.Z/lib64/libstdc++.so`;
-- GCC finds its own libraries;
-- No need to add `/opt/llvm-AA.B.C/lib` because executables in LLVM use `RUNPATH` and do not depend on custom system libs.
+The script adds configuration files in the Clang installation's `bin/` directory to ensure the compiler automatically picks up the intended GCC toolchain (`clang++.cfg` is a symbolic link to `clang.cfg` to avoid duplication).
 
 ## Licence
 
