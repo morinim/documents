@@ -10,12 +10,18 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# POSIX-strict build script for `LLVM/Clang` under `/opt`.
-# It assumes a source tree structured like the official LLVM monorepo.
-
+# ------------------------------------------------------------------------
+# Setup environment
+# ------------------------------------------------------------------------
 # Abort on error and treat unset vars as errors.
-# (Note: `set -u` is POSIX; `set -e` is POSIX but does not propagate into subshells).
+# (Note: `set -u` is POSIX; `set -e` is POSIX but does not propagate into
+# subshells).
 set -eu
+
+command -v ninja >/dev/null 2>&1 || {
+  echo "Error: ninja not found" >&2
+  exit 1
+}
 
 # Increase file descriptors to avoid LLVM link failures.
 ulimit -n 65536 || echo "Warning: could not raise ulimit -n"
@@ -25,160 +31,115 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 
-# Resolve directories.
-VERSION=$(basename "$1")
+LLVM_BASENAME=$(basename "$1")
+
+case "$LLVM_BASENAME" in
+  llvm-project-*)
+    LLVM_VERSION=${LLVM_BASENAME#llvm-project-}
+    ;;
+  *)
+    echo "Error: expected llvm-project-<version>" >&2
+    exit 1
+    ;;
+esac
+
+# Install dir for final toolchain
+PREFIX="/opt/clang-${LLVM_VERSION}"
+
+BUILD_STAGE1="$PWD/build-stage1"
+BUILD_STAGE2="$PWD/build-stage2"
+STAGE1_PREFIX="$PWD/stage1-install"
 
 # The primary use of `--` is to tell the shell that all following arguments
 # should be treated as operands (like filenames or directory names), even if
 # they begin with a hyphen.
 # Without `--`, if your directory name began with a hyphen, the dirname command
 # would incorrectly interpret it as an option or flag.
-srcbase=$(dirname -- "$1")
+SRCBASE=$(dirname -- "$1")
 
-srcdir=$(cd "$srcbase" && pwd)/"$VERSION"
+SRCDIR=$(cd "$SRCBASE" && pwd)/"$LLVM_BASENAME"
+
+# Check for directory clashes.
+case "$PWD" in
+  "$SRCDIR"/*)
+    echo "Error: build directory must not be inside the source tree." >&2
+    exit 1
+    ;;
+esac
 
 # LLVM uses CMake, so check CMakeLists.txt instead of configure.
-if [ ! -f "$srcdir/llvm/CMakeLists.txt" ]; then
-  echo "Error: $srcdir does not look like an LLVM/Clang source tree" >&2
+if [ ! -f "$SRCDIR/llvm/CMakeLists.txt" ]; then
+  echo "Error: $SRCDIR does not look like an LLVM/Clang source tree" >&2
   exit 1
 fi
 
-# Install dir for final toolchain
-destdir="/opt/$VERSION"
+echo "Using sources from: $SRCDIR (containing version $LLVM_VERSION)"
+echo "Destination directory: $PREFIX"
 
-# Detect GCC toolchain (only if present under `/opt`).
-set +e
-GCC_CANDIDATES=$(ls -d /opt/gcc-* 2>/dev/null | sort -V)
-set -e
+# ------------------------------------------------------------------------
+# Stage 1 – bootstrap Clang using system libc++/libstdc++
+# ------------------------------------------------------------------------
+rm -rf "$BUILD_STAGE1"
+cmake -G Ninja -S "$SRCDIR/llvm" -B "$BUILD_STAGE1" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX="$STAGE1_PREFIX" \
+    -DLLVM_ENABLE_PROJECTS="clang;lld" \
+    -DLLVM_TARGETS_TO_BUILD="X86" \
+    -DLLVM_ENABLE_ZLIB=OFF \
+    -DLLVM_ENABLE_ZSTD=OFF
 
-FOUND_GCC=""
-if [ -n "$GCC_CANDIDATES" ]; then
-  FOUND_GCC=$(printf "%s\n" "$GCC_CANDIDATES" | tail -n 1)
+ninja -C "$BUILD_STAGE1"
+ninja -C "$BUILD_STAGE1" install
+
+if [ ! -x "$STAGE1_PREFIX/bin/clang" ]; then
+  echo "Error: stage-1 clang not found" >&2
+  exit 1
 fi
 
-if [ -n "$FOUND_GCC" ]; then
-  echo " Found GCC toolchain: $FOUND_GCC"
-  EXTRA_CFLAGS="-I$FOUND_GCC/include"
-  EXTRA_LDFLAGS="-L$FOUND_GCC/lib64 -Wl,-rpath,$FOUND_GCC/lib64"
-  STD_CXX_LIB="libstdc++"
-else
-  echo " No /opt/gcc-* found, using system libraries"
-  EXTRA_CFLAGS=""
-  EXTRA_LDFLAGS=""
-  STD_CXX_LIB=""   # use libc++ defaults
-fi
+# ------------------------------------------------------------------------
+# Stage 2 – final Clang built with libc++, libc++abi, compiler-rt
+# ------------------------------------------------------------------------
+rm -rf "$BUILD_STAGE2"
 
-# Stage-1 compiler (assumes clang is presentbuild with system Clang).
-echo "=== Stage-1: system Clang bootstrap ==="
+cmake -G Ninja -S "$SRCDIR/llvm" -B "$BUILD_STAGE2" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+    -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
+    -DLLVM_USE_LINKER=lld \
+    -DCMAKE_INSTALL_LIBDIR=lib64 \
+    -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld" \
+    -DLLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi;libunwind" \
+    -DLIBCXX_ENABLE_THREADS=ON \
+    -DLIBCXX_HAS_PTHREAD_API=ON \
+    -DLIBCXX_ENABLE_SHARED=ON \
+    -DLIBCXXABI_ENABLE_THREADS=ON \
+    -DLIBCXX_HAS_PTHREAD_API=ON \
+    -DLLVM_TARGETS_TO_BUILD="X86" \
+    -DLLVM_ENABLE_ZLIB=ON \
+    -DLLVM_ENABLE_ZSTD=ON \
+-DCMAKE_INSTALL_RPATH='$ORIGIN/../lib64:$ORIGIN/../lib64/x86_64-unknown-linux-gnu' \
+    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+    -DCMAKE_C_COMPILER="$STAGE1_PREFIX/bin/clang" \
+    -DCMAKE_CXX_COMPILER="$STAGE1_PREFIX/bin/clang++" \
+    -DLIBCXX_USE_COMPILER_RT=ON \
+    -DLIBCXXABI_USE_COMPILER_RT=ON \
+    -DCOMPILER_RT_USE_LIBCXX=ON \
+    -DLLVM_ENABLE_LIBCXX=ON \
+    -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=ON \
+    -DLIBCXX_INCLUDE_TESTS=OFF \
+    -DLIBCXXABI_INCLUDE_TESTS=OFF \
+    -DLLVM_ENABLE_LTO=Thin \
+    -DLIBUNWIND_USE_COMPILER_RT=ON \
+    -DCOMPILER_RT_BUILD_SANITIZERS=ON
 
-mkdir -p build-stage1
-cd build-stage1
+ninja -C "$BUILD_STAGE2"
+ninja -C "$BUILD_STAGE2" install
 
-# Flags and build options
-SLKCFLAGS="-O2 -fPIC -pipe -fno-plt"
-LIBDIRSUFFIX="64"
-NUMJOBS="-j8"
-
-CFLAGS="$SLKCFLAGS"
-CXXFLAGS="$SLKCFLAGS"
-
-# Common CMake invocation
-cmake -G "Unix Makefiles" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="/tmp/llvm-bootstrap-$VERSION" \
-  -DCMAKE_INSTALL_LIBDIR="lib$LIBDIRSUFFIX" \
-  -DCMAKE_C_COMPILER="clang" \
-  -DCMAKE_CXX_COMPILER="clang++" \
-  -DCMAKE_C_FLAGS="$CFLAGS" \
-  -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
-  -DLLVM_ENABLE_PROJECTS="clang;lld" \
-  -DLLVM_TARGETS_TO_BUILD="X86" \
-  -DLLVM_ENABLE_RTTI=ON \
-  -DLLVM_ENABLE_EH=ON \
-  -DLLVM_ENABLE_ASSERTIONS=OFF \
-  -DLLVM_BUILD_LLVM_DYLIB=ON \
-  -DLLVM_LINK_LLVM_DYLIB=ON \
-  -DLLVM_USE_LINKER=lld \
-  -DLLVM_USE_RELATIVE_PATHS_IN_FILES=ON \
-  "$srcdir/llvm"
-
-make $NUMJOBS
-make install
-
-cd ..
-
-# Stage-2: final build linked against /opt/gcc-XX
-
-echo "=== Stage-2: final Clang, optionally linked to $FOUND_GCC ==="
-
-mkdir -p build-final
-cd build-final
-
-CFLAGS="$SLKCFLAGS $EXTRA_CFLAGS"
-CXXFLAGS="$SLKCFLAGS $EXTRA_CFLAGS"
-LDFLAGS="$EXTRA_LDFLAGS"
-
-cmake -G "Unix Makefiles" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="$destdir" \
-  -DCMAKE_INSTALL_LIBDIR="lib$LIBDIRSUFFIX" \
-  -DCMAKE_C_COMPILER="/tmp/llvm-bootstrap-$VERSION/bin/clang" \
-  -DCMAKE_CXX_COMPILER="/tmp/llvm-bootstrap-$VERSION/bin/clang++" \
-  -DCMAKE_C_FLAGS="$CFLAGS" \
-  -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
-  -DCMAKE_EXE_LINKER_FLAGS="$LDFLAGS" \
-  -DCMAKE_SHARED_LINKER_FLAGS="$LDFLAGS" \
-  -DLLVM_ENABLE_PROJECTS="clang;lld;compiler-rt" \
-  -DLLVM_TARGETS_TO_BUILD="X86" \
-  -DLLVM_ENABLE_RTTI=ON \
-  -DLLVM_ENABLE_EH=ON \
-  -DLLVM_ENABLE_ASSERTIONS=OFF \
-  -DLLVM_BUILD_LLVM_DYLIB=ON \
-  -DLLVM_LINK_LLVM_DYLIB=ON \
-  -DLLVM_USE_LINKER=lld \
-  -DLLVM_ENABLE_ZLIB=ON \
-  -DLLVM_ENABLE_ZSTD=OFF \
-  -DLLVM_USE_RELATIVE_PATHS_IN_FILES=ON \
-  -DCLANG_DEFAULT_CXX_STDLIB="$STD_CXX_LIB" \
-  "$srcdir/llvm"
-
-make $NUMJOBS
-make install
-
-# Create clang.cfg and clang++.cfg inside the installed bin directory
-f [ -n "$FOUND_GCC" ]; then
-  GCC_VER=$(basename "$FOUND_GCC" | sed 's/gcc-//')
-
-  # Detect the GCC target triple (whatever directory exists inside lib64/gcc/)
-  TRIPLE_DIR=""
-  for d in "$FOUND_GCC/lib64/gcc/"*; do
-    if [ -d "$d/$GCC_VER" ]; then
-      TRIPLE_DIR=$(basename "$d")
-      break
-    fi
-  done
-
-  if [ -z "$TRIPLE_DIR" ]; then
-    echo "Error: Could not detect GCC target triple under $FOUND_GCC/lib64/gcc"
-    exit 1
-  fi
-
-  GCC_TOOLCHAIN_DIR="$FOUND_GCC/lib64/gcc/$TRIPLE_DIR/$GCC_VER"
-  CFGDIR="$destdir/bin"
-
-  printf '%s\n' \
-    "--gcc-install-dir=$GCC_TOOLCHAIN_DIR" \
-    "--sysroot=$FOUND_GCC" \
-    > "$CFGDIR/clang.cfg"
-
-  # Create symlink for clang++
-  (
-    cd "$CFGDIR" || exit 1
-    ln -sf clang.cfg clang++.cfg
-  )
-  echo "Generated configuration files with detected triple: $TRIPLE_DIR"
-  echo "  $CFGDIR/clang.cfg"
-  echo "  $CFGDIR/clang++.cfg"
-fi
-
-echo "=== Installation completed successfully at $destdir ==="
+echo
+echo "Clang installed in:"
+echo "  $PREFIX"
+echo
+echo "Add to PATH:"
+echo "  export PATH=\"$PREFIX/bin:\$PATH\""
+echo
+echo "clang++ defaults to libc++ instead of libstdc++"
