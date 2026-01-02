@@ -1,4 +1,4 @@
-# Building a self-contained Clang toolchain under /opt’
+# Building a self-contained Clang toolchain under `/opt`
 
 ## Overview
 
