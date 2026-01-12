@@ -270,3 +270,29 @@ It loses clever compactness but gains:
 - maintainability.
 
 For scripts that run as root and manage system state, that's a very good trade.
+
+## How to use this script
+
+You must have `root` privileges (or use `sudo`) to move packages into the system's patch directory.
+
+### Recommended Update Sequence
+
+To ensure the system is updated correctly and all configuration changes are captured, follow this specific order of operations:
+
+1. **Update package indexes**
+   ```bash
+   # slackpkg update
+   ```
+
+2. **Perform the system upgrade**
+    ```bash
+    # slackpkg upgrade-all
+    ```
+
+3. **Finalize with the management script**
+   Run this script to handle post-upgrade tasks.
+   ```bash
+   # ./manage_updates.sh
+   ```
+
+   [!IMPORTANT] Always run slackpkg upgrade-all before this script to ensure the core system libraries and binaries are at their latest versions before the script performs its final checks.
