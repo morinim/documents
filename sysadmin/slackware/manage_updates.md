@@ -1,8 +1,44 @@
 # From quick hacks to a reliable maintenance script
 
+## Introduction
+
+This script serves as a local repository maintenance tool. Since Slackware updates are downloaded and kept locally (due to `DELALL=off` in `slackpkg.conf`), the local package cache grows indefinitely. This script automates the cleanup of that cache by implementing a retention policy: it identifies and removes older versions of packages, ensuring that only the two most recent versions of any given package are kept in the local archive.
+
+## How the Script Works
+
+The script enforces a retention policy on the local package archive:
+- **Version Control**. It scans the local package directory and groups files by package name;
+- **Retention**. It identifies packages with multiple versions;
+- **Cleanup**. It automatically deletes older versions, leaving only the **two most recent versions** of each package.
+
+This ensures you always have the current version and the immediate previous version available for a quick downgrade/rollback if a bug is discovered, without allowing the archive to grow indefinitely.
+
+### Prerequisites
+
+- You must have `root` privileges (or use `sudo`) to move packages into the system's patch directory.
+- `DELALL=off` in my `/etc/slackpkg/slackpkg.conf`.
+
+### The maintenance workflow
+
+In a system configured with `DELALL=off` in `/etc/slackpkg/slackpkg.conf`, every package downloaded during an update is preserved in the local cache. Over time, this can consume significant disk space.
+
+The standard update procedure follows this sequence:
+
+1. `slackpkg update` - Fetch latest package lists.
+2. `slackpkg upgrade-all` - Upgrade the system (packages are saved to cache).
+3. `./manage_updates.sh` - Clean the cache.
+
+
+If everything is ok:
+
+```bash
+~# ./manage_updates.sh --force
+```
+
+
 ## Evolving a Slackware package cleanup script in Bash
 
-Shell scripts often start life as quick solutions to immediate problems. That was exactly the case here: two small scripts to manage [Slackware](http://www.slackware.com)'s package cache in `/var/cache`. They were short and they did the job.
+Shell scripts often start life as quick solutions to immediate problems. That was exactly the case here: two small scripts to manage [Slackware](http://www.slackware.com)'s package cache in `/var/cache`. They were short and they did the job (see https://www.linuxquestions.org/questions/slackware-14/today%27s-current-icu4c-upgrade-broke-ktown%27s-sddm-4175619108/page2.html).
 
 Over time, however, they also revealed typical weaknesses of "quick" shell code: fragile assumptions, temporary files, no safety net and a growing risk when running as root.
 
@@ -270,29 +306,3 @@ It loses clever compactness but gains:
 - maintainability.
 
 For scripts that run as root and manage system state, that's a very good trade.
-
-## How to use this script
-
-You must have `root` privileges (or use `sudo`) to move packages into the system's patch directory.
-
-### Recommended Update Sequence
-
-To ensure the system is updated correctly and all configuration changes are captured, follow this specific order of operations:
-
-1. **Update package indexes**
-   ```bash
-   # slackpkg update
-   ```
-
-2. **Perform the system upgrade**
-    ```bash
-    # slackpkg upgrade-all
-    ```
-
-3. **Finalize with the management script**
-   Run this script to handle post-upgrade tasks.
-   ```bash
-   # ./manage_updates.sh
-   ```
-
-   [!IMPORTANT] Always run slackpkg upgrade-all before this script to ensure the core system libraries and binaries are at their latest versions before the script performs its final checks.
