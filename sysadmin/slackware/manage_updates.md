@@ -6,7 +6,7 @@ Shell scripts often start life as quick solutions to immediate problems. That wa
 
 Over time, however, they also revealed typical weaknesses of "quick" shell code: fragile assumptions, temporary files, no safety net and a growing risk when running as root.
 
-This tutorial retraces the evolution from those initial scripts to a single, clear and safe maintenance tool. It also highlights the Bash features (and traps) encountered along the way.
+This document retraces the evolution from those initial scripts to a single, clear and safe maintenance tool. It also highlights the Bash features (and traps) encountered along the way.
 
 ## The starting point
 
