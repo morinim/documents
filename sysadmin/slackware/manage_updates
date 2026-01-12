@@ -1,0 +1,168 @@
+#!/bin/bash
+#
+# Archive and clean old Slackware package caches in `/var/cache`.
+#
+# Behaviour:
+#  1. Rename `/var/cache/packages` to `/var/cache/packagesYYYYMMDD` (if present)
+#  2. Keep the newest `N` versions of each package
+#  3. Remove older package archives
+#
+# Slackware package format: `name-version-arch-build.t?z`
+
+set -euo pipefail
+IFS=$'\n'
+
+if [[ $EUID -ne 0 ]]; then
+   echo "Error: This script must be run as root (use sudo)." >&2
+   exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+CACHE_DIR="/var/cache"
+KEEP_COUNT=2
+DRY_RUN=true   # default: safe
+
+# ---------------------------------------------------------------------------
+# Usage
+# ---------------------------------------------------------------------------
+usage()
+{
+    echo "Usage: $(basename "$0") [--dry-run | --force]"
+    echo
+    echo "  --dry-run   Show what would be done (default)"
+    echo "  --force     Actually move and delete files"
+    echo "  -h, --help  Show this help"
+}
+
+# ---------------------------------------------------------------------------
+# CLI parsing
+# ---------------------------------------------------------------------------
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dry-run)
+            DRY_RUN=true
+            ;;
+        --force)
+            DRY_RUN=false
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            usage >&2
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+# ---------------------------------------------------------------------------
+# Archive current packages directory
+# ---------------------------------------------------------------------------
+TODAY=$(date +%Y%m%d)
+CURRENT="$CACHE_DIR/packages"
+ARCHIVE="$CACHE_DIR/packages$TODAY"
+
+echo "==> Archiving current packages directory"
+
+if [[ -d "$CURRENT" ]]; then
+    if [[ -d "$ARCHIVE" ]]; then
+        echo "    Archive $ARCHIVE already exists, not moving."
+    else
+        if [[ "$DRY_RUN" == true ]]; then
+            echo "    [DRY RUN] Would move $CURRENT -> $ARCHIVE"
+        else
+            echo "    Moving $CURRENT -> $ARCHIVE"
+            mv "$CURRENT" "$ARCHIVE"
+        fi
+    fi
+else
+    echo "    No current packages directory found."
+fi
+
+# ---------------------------------------------------------------------------
+# Collect package files
+# ---------------------------------------------------------------------------
+echo
+echo "==> Scanning package archives"
+
+package_list=()
+
+while read -r dir; do
+    while read -r file; do
+        package_list+=("$file")
+    done < <(find "$dir" -type f -name "*.t?z")
+done < <(
+    find "$CACHE_DIR" -maxdepth 1 -type d -name 'packages*'
+)
+
+if [[ ${#package_list[@]} -eq 0 ]]; then
+    echo "    No package files found. Nothing to clean."
+    exit 0
+fi
+
+echo "    Found ${#package_list[@]} package files."
+
+# ---------------------------------------------------------------------------
+# Build sortable list
+# ---------------------------------------------------------------------------
+# Format:
+#   full_path<TAB>pkg_name<TAB>date
+
+sortable_list=()
+
+for pkg_path in "${package_list[@]}"; do
+    pkg_file=$(basename "$pkg_path")
+    pkg_dir=$(basename "$(dirname "$pkg_path")")
+
+    pkg_name=${pkg_file%-*-*-*}
+    pkg_date=${pkg_dir#packages}
+
+    sortable_list+=("$(printf '%s\t%s\t%s' "$pkg_path" "$pkg_name" "$pkg_date")")
+done
+
+# ---------------------------------------------------------------------------
+# Sort and select files to remove
+# ---------------------------------------------------------------------------
+echo
+echo "==> Selecting old package versions (keeping $KEEP_COUNT per package)"
+
+to_remove=()
+
+while read -r old_pkg; do
+    to_remove+=("$old_pkg")
+done < <(
+    printf "%s\n" "${sortable_list[@]}" \
+    | sort -k2,2 -k3,3r \
+    | awk -v keep="$KEEP_COUNT" '++seen[$2] > keep { print $1 }')
+
+if [[ ${#to_remove[@]} -eq 0 ]]; then
+    echo "    Nothing to remove."
+    exit 0
+fi
+
+echo "    ${#to_remove[@]} files marked for removal."
+
+# ---------------------------------------------------------------------------
+# Remove files
+# ---------------------------------------------------------------------------
+echo
+echo "==> Removing old packages"
+
+for file in "${to_remove[@]}"; do
+    if [[ "$DRY_RUN" == true ]]; then
+        echo "    [DRY RUN] Would remove $file"
+        [[ -f "$file.asc" ]] &&
+            echo "    [DRY RUN] Would remove $file.asc"
+    else
+        echo "    Removing $file."
+        rm -f "$file" "$file.asc"
+    fi
+done
+
+echo
+echo "==> Done"
