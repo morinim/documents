@@ -38,7 +38,7 @@ If everything is ok:
 
 ## Evolving a Slackware package cleanup script in Bash
 
-Shell scripts often start life as pragmatic solutions to immediate problems. That was exactly the case here: two small scripts to manage [Slackware](http://www.slackware.com)'s package cache in `/var/cache`. They were short and they did the job (see https://www.linuxquestions.org/questions/slackware-14/today%27s-current-icu4c-upgrade-broke-ktown%27s-sddm-4175619108/page2.html): both scripts worked reliably for their intended purpose and were perfectly reasonable solutions at the time they were written.
+Shell scripts often start life as pragmatic solutions to immediate problems. That was exactly the case here: two small scripts to manage [Slackware](http://www.slackware.com)'s package cache in `/var/cache` originally written by [Allend](https://www.linuxquestions.org/questions/user/allend-72541/). They were short and they did the job (see https://www.linuxquestions.org/questions/slackware-14/today%27s-current-icu4c-upgrade-broke-ktown%27s-sddm-4175619108/page2.html): both scripts worked reliably for their intended purpose and were perfectly reasonable solutions at the time they were written.
 
 Over time, however, they also revealed some natural limitations of scripts written to solve an immediate need: reliance on temporary files, assumptions that were implicit rather than enforced and limited safety mechanisms when running as root.
 
