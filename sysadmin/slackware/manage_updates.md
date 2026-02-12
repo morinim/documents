@@ -16,7 +16,7 @@ This ensures you always have the current version and the immediate previous vers
 ### Prerequisites
 
 - You must have `root` privileges (or use `sudo`) to move packages into the system's patch directory.
-- `DELALL=off` in my `/etc/slackpkg/slackpkg.conf`.
+- `DELALL=off` in `/etc/slackpkg/slackpkg.conf`.
 
 ### The maintenance workflow
 
@@ -38,9 +38,9 @@ If everything is ok:
 
 ## Evolving a Slackware package cleanup script in Bash
 
-Shell scripts often start life as quick solutions to immediate problems. That was exactly the case here: two small scripts to manage [Slackware](http://www.slackware.com)'s package cache in `/var/cache`. They were short and they did the job (see https://www.linuxquestions.org/questions/slackware-14/today%27s-current-icu4c-upgrade-broke-ktown%27s-sddm-4175619108/page2.html).
+Shell scripts often start life as pragmatic solutions to immediate problems. That was exactly the case here: two small scripts to manage [Slackware](http://www.slackware.com)'s package cache in `/var/cache`. They were short and they did the job (see https://www.linuxquestions.org/questions/slackware-14/today%27s-current-icu4c-upgrade-broke-ktown%27s-sddm-4175619108/page2.html): both scripts worked reliably for their intended purpose and were perfectly reasonable solutions at the time they were written.
 
-Over time, however, they also revealed typical weaknesses of "quick" shell code: fragile assumptions, temporary files, no safety net and a growing risk when running as root.
+Over time, however, they also revealed some natural limitations of scripts written to solve an immediate need: reliance on temporary files, assumptions that were implicit rather than enforced and limited safety mechanisms when running as root.
 
 This document retraces the evolution from those initial scripts to a single, clear and safe maintenance tool. It also highlights the Bash features (and traps) encountered along the way.
 
@@ -56,7 +56,7 @@ mv /var/cache/packages /var/cache/packages$(date +%Y%m%d)
 
 This script does exactly one thing: after running `slackpkg`, it renames the packages directory to include the current date.
 
-Simple, effective but no diagnostics, no check for existing archives, no dry run, destructive by default.
+Simple and effective, but intentionally minimal: no diagnostics, no check for existing archives, no dry run and destructive by default.
 
 The second script is more involved. It:
 
@@ -99,7 +99,7 @@ while read line; do
 done < /tmp/list7
 ```
 
-While functional, this approach has several drawbacks:
+While functional, this approach also comes with some trade-offs:
 
 - intermediate state is scattered across `/tmp`;
 - debugging requires inspecting many files;
@@ -119,7 +119,7 @@ Instead, the new script preserves the original logical phases:
 
 Each step is labelled and produces diagnostic output.
 
-This is an important mindset shift: the script is written for humans first, not for the shell.
+This reflects an intentional design choice: the script is written for humans first, not for the shell.
 
 ## Dry run by default
 
@@ -145,7 +145,7 @@ The pattern is simple, explicit and far safer than trying to infer intent from f
 
 ## Arrays instead of temporary files
 
-The original cleanup script uses a chain of `/tmp/listN` files. This works, but it obscures intent.
+The original cleanup script uses a chain of `/tmp/listN` files. This works, but it makes the data flow harder to follow.
 
 The rewritten version replaces these files with Bash arrays:
 
@@ -228,7 +228,7 @@ ls
 
 This avoids the immediate failure, but introduces a different risk: commands may now run with missing argument and behaviour changes silently.
 
-In system scripts, silent changes are often worse than hard failures.
+In system scripts, silent changes can be more dangerous than hard failures.
 
 Letting `find` do the matching
 
@@ -254,7 +254,7 @@ printf "%s\n" "${sortable_list[@]}" | while read -r line; do
 done
 ```
 
-At first glance this looks fine but it's wrong. In Bash each element of a pipeline runs in a subshell and variables modified inside the loop are lost.
+At first glance this looks fine, but it doesn't behave as intended. In Bash each element of a pipeline runs in a subshell and variables modified inside the loop are lost.
 
 The correct, explicit solution uses process substitution:
 
@@ -306,3 +306,6 @@ It loses clever compactness but gains:
 - maintainability.
 
 For scripts that run as root and manage system state, that's a very good trade.
+
+**The original scripts did exactly what they were designed to do; this evolution simply reflects changing requirements, increased caution and the desire to make future maintenance easier and safer.
+**
