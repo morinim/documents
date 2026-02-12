@@ -306,6 +306,4 @@ It loses clever compactness but gains:
 - maintainability.
 
 For scripts that run as root and manage system state, that's a very good trade.
-
-**The original scripts did exactly what they were designed to do; this evolution simply reflects changing requirements, increased caution and the desire to make future maintenance easier and safer.
-**
+**The original scripts did exactly what they were designed to do; this evolution simply reflects changing requirements, increased caution and the desire to make future maintenance easier and safer.**
