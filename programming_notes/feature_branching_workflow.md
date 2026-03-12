@@ -95,3 +95,5 @@ mentre nel caso di *no fast forward*:
 ```
 
 Nel secondo caso la cronologia del ramo rimane esplicitamente collegata alla storia di `main`: il ramo perde il proprio nome ma i suoi _commit_ restano visibili nella struttura del _repository_.
+
+**NOTA**: se l'obiettivo principale è mantenere main ordinato e leggibile, conviene preferire lo _squash merge_. Se invece si vuole conservare la storia completa dello sviluppo della funzionalità, è più opportuno utilizzare un _merge_ con `--no-ff`.
