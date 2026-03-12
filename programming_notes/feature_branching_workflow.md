@@ -64,7 +64,21 @@ git branch -d nuova_funzionalita
 git push origin --delete nuova_funzionalita
 ```
 
-Il primo comando potrebbe mostrare un *warning* proprio relativo al fatto che il ramo di sviluppo è stato cancellato solo localmente.
+Il comando `git branch -d` cancella il ramo locale solo se `git` riconosce che la sua cronologia è già confluita nel ramo corrente. Questo avviene normalmente quando si utilizza un _merge commit_ (ad esempio con `--no-ff`) oppure un _fast-forward_.
+
+Nel caso di _squash merge_, invece, `git` potrebbe mostrare un messaggio come:
+
+```
+error: The branch 'nuova_funzionalita' is not fully merged.
+```
+
+Questo accade perché `git merge --squash` non crea un vero _merge commit_: le modifiche del ramo vengono integrate in `main` tramite un nuovo _commit_, ma la cronologia originale del ramo non viene collegata a quella di `main`. Di conseguenza `git` non può stabilire automaticamente che il ramo sia già stato incorporato.
+
+Se siamo certi che le modifiche siano state integrate correttamente, è comunque possibile eliminare il ramo forzando l’operazione:
+
+```
+git branch -D nuova_funzionalita
+```
 
 La situazione finale sarà, nel caso di *squash*:
 
@@ -80,4 +94,4 @@ mentre nel caso di *no fast forward*:
    └◯─◯─◯─┘         
 ```
 
-il ramo di sviluppo ha perso il suo nome ma non viene effettivamente cancellato.
+Nel secondo caso la cronologia del ramo rimane esplicitamente collegata alla storia di `main`: il ramo perde il proprio nome ma i suoi _commit_ restano visibili nella struttura del _repository_.
