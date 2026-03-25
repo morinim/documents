@@ -120,7 +120,12 @@ for pkg_path in "${package_list[@]}"; do
     pkg_dir=$(basename "$(dirname "$pkg_path")")
 
     pkg_name=${pkg_file%-*-*-*}
-    pkg_date=${pkg_dir#packages}
+
+    if [[ "$pkg_dir" == "packages" ]]; then
+        pkg_date=$TODAY
+    else
+        pkg_date=${pkg_dir#packages}
+    fi
 
     sortable_list+=("$(printf '%s\t%s\t%s' "$pkg_path" "$pkg_name" "$pkg_date")")
 done
