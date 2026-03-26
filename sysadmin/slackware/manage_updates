@@ -4,7 +4,7 @@
 #
 # Behaviour:
 #  1. Rename `/var/cache/packages` to `/var/cache/packagesYYYYMMDD` (if present)
-#  2. Keep the newest `N` versions of each package
+#  2. Keep the newest `N` copies of each package, based on cache date
 #  3. Remove older package archives
 #
 # Slackware package format: `name-version-arch-build.t?z`
@@ -20,8 +20,8 @@ fi
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-CACHE_DIR="/var/cache"
-KEEP_COUNT=2
+readonly CACHE_DIR="/var/cache"
+readonly KEEP_COUNT=2
 DRY_RUN=true   # default: safe
 
 # ---------------------------------------------------------------------------
@@ -63,9 +63,9 @@ done
 # ---------------------------------------------------------------------------
 # Archive current packages directory
 # ---------------------------------------------------------------------------
-TODAY=$(date +%Y%m%d)
-CURRENT="$CACHE_DIR/packages"
-ARCHIVE="$CACHE_DIR/packages$TODAY"
+readonly TODAY=$(date +%Y%m%d)
+readonly CURRENT="$CACHE_DIR/packages"
+readonly ARCHIVE="$CACHE_DIR/packages$TODAY"
 
 echo "==> Archiving current packages directory"
 
@@ -117,17 +117,21 @@ sortable_list=()
 
 for pkg_path in "${package_list[@]}"; do
     pkg_file=$(basename "$pkg_path")
-    pkg_dir=$(basename "$(dirname "$pkg_path")")
+
+    rel_path=${pkg_path#"$CACHE_DIR"/}
+    pkg_dir=${rel_path%%/*}
 
     pkg_name=${pkg_file%-*-*-*}
 
     if [[ "$pkg_dir" == "packages" ]]; then
         pkg_date=$TODAY
+    elif [[ "$pkg_dir" =~ ^packages([0-9]{8})$ ]]; then
+        pkg_date=${BASH_REMATCH[1]}
     else
-        pkg_date=${pkg_dir#packages}
+        pkg_date=0
     fi
 
-    sortable_list+=("$(printf '%s\t%s\t%s' "$pkg_path" "$pkg_name" "$pkg_date")")
+    sortable_list+=("$pkg_path"$'\t'"$pkg_name"$'\t'"$pkg_date")
 done
 
 # ---------------------------------------------------------------------------
@@ -142,8 +146,8 @@ while read -r old_pkg; do
     to_remove+=("$old_pkg")
 done < <(
     printf "%s\n" "${sortable_list[@]}" \
-    | sort -k2,2 -k3,3r \
-    | awk -v keep="$KEEP_COUNT" '++seen[$2] > keep { print $1 }')
+    | sort -t $'\t' -k2,2 -k3,3r -k1,1 \
+    | awk -F '\t' -v keep="$KEEP_COUNT" '++seen[$2] > keep { print $1 }')
 
 if [[ ${#to_remove[@]} -eq 0 ]]; then
     echo "    Nothing to remove."
