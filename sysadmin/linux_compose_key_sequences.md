@@ -66,7 +66,7 @@ If you only memorise four things, make it these:
 
 Yes, this is _strongly_ biased — Italian user, US keyboard :-)
 
-## What is I use Windows?
+## What if I use Windows?
 
 [Wincompose](https://github.com/samhocevar/wincompose) is a compose key for Windows, free and open-source created by Sam Hoevar.
 
