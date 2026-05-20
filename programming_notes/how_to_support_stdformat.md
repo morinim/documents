@@ -46,7 +46,8 @@ template<> struct std::formatter<point>
     return it;
   }
 
-  [[nodiscard]] auto format(const point &p, std::format_context &ctx) const
+  template<class FormatContext>
+  [[nodiscard]] auto format(const point &p, FormatContext &ctx) const
   {
     return std::format_to(ctx.out(), "({}, {})", p.x(), p.y());
   }
@@ -67,6 +68,12 @@ Point: (3, 7)
 ```
 
 **`parse()` must be `constexpr` for the compiler to validate format strings at compile-time**.
+
+You can test whether a type is formattable with:
+
+```C++
+static_assert(std::formattable<point, char>);
+```
 
 
 ## Supporting custom format options
@@ -112,7 +119,8 @@ template<> struct std::formatter<point>
     return it;
   }
 
-  [[nodiscard]] auto format(const point &p, std::format_context &ctx) const
+  template<class FormatContext>
+  [[nodiscard]] auto format(const point &p, FormatContext &ctx) const
   {
     if (presentation == 'f')
       return std::format_to(ctx.out(), "point[x={}, y={}]", p.x(), p.y());
@@ -139,6 +147,7 @@ If your class already has a natural string representation, you can delegate to a
 ```C++
 #include <format>
 #include <string>
+#include <string_view>
 
 class widget
 {
@@ -154,15 +163,16 @@ private:
   std::string name_;
 };
 
-template<> struct std::formatter<widget> : std::formatter<std::string_view>
+template<>
+struct std::formatter<widget, char> : std::formatter<std::string_view, char>
 {
   // We don't need to define parse() because we inherit it
   // from std::formatter<std::string_view>!
 
-  [[nodiscard]] auto format(const widget &w, std::format_context &ctx) const
+  template<class FormatContext>
+  [[nodiscard]] auto format(const widget &w, FormatContext &ctx) const
   {
-    // This now supports {:>10} or {:*^20} automatically.
-    return std::formatter<std::string_view>::format(w.to_string(), ctx);
+    return std::formatter<std::string_view, char>::format(w.to_string(), ctx);
   }
 };
 ```
@@ -176,6 +186,11 @@ This is often the cleanest solution when you do not need custom parsing.
 - Returning the wrong iterator from `parse()`. `parse()` should return the iterator pointing at the closing `}` or the position just before formatting resumes.
 - Ignoring invalid specifiers. If you accept custom options, reject unknown ones with `std::format_error`.
 - Formatting via `operator<<`. `std::format` does not automatically use stream insertion operators; having: `std::ostream &operator<<(std::ostream &, const MyType &);` does not make the type formattable.
+- Making `format()` take `std::format_context &` directly. This may compile in simple cases, but a conforming implementation may check formattability using a different `std::basic_format_context`. Prefer a templated `format()` member:
+    ```C++
+    template<class FormatContext>
+    auto format(const T &value, FormatContext &ctx) const;
+    ```
 
 
 ## More details
@@ -223,7 +238,7 @@ constexpr auto parse(std::format_parse_context &ctx)
 }
 ```
 
-** You must return an iterator pointing to where parsing stopped. Usually that's the `}`** (or just before it).
+**You must return an iterator pointing to where parsing stopped. Usually that's the `}`** (or just before it).
 
 `parse()` runs once per format string, so you can store parsed options inside the formatter object:
 
@@ -231,7 +246,7 @@ constexpr auto parse(std::format_parse_context &ctx)
 char mode = 'd';  // stored between parse() and format()
 ```
 
-### `std::format_context`
+### Format context
 
 [`std::format_context`](https://en.cppreference.com/w/cpp/utility/format/basic_format_context.html) represents the output side of formatting.
 
